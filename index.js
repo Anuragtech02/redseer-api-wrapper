@@ -36,11 +36,25 @@ async function postForm(form, type) {
   });
 }
 
-app.get("/forms", async (req, res) => {
-  const id = req.query.id;
-  const result = id ? await getForm(id) : getForms();
+app.get("/allForms", async (req, res) => {
+  const result = await getForms();
 
-  if (result.data.status === "success") {
+  if (result) {
+    res.status(200).json(result.data);
+  } else {
+    res.status(400).json(result.data);
+  }
+});
+
+app.get("/forms/:id", async (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.send(400).json({ error: "Not found!" });
+    return;
+  }
+  const result = await getForm(id);
+
+  if (result) {
     res.status(200).json(result.data);
   } else {
     res.status(400).json(result.data);
@@ -57,5 +71,5 @@ app.post("/formresult", async (req, res) => {
 });
 
 app.listen(PORT, function () {
-  console.log("CORS-enabled web server listening on port 80");
+  console.log("CORS-enabled web server listening on port " + PORT);
 });
