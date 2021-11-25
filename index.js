@@ -30,8 +30,8 @@ async function getForm(id) {
   return await axios.get(`${FORMS_API_ENDPOINT}/${id}`);
 }
 
-async function postForm(form, type) {
-  return await axios.post(FORMS_API_ENDPOINT, form, {
+async function postForm(form, id) {
+  return await axios.post(`${FORMS_SAVE_ENDPOINT}/${id}`, form, {
     headers,
   });
 }
@@ -61,12 +61,14 @@ app.get("/forms/:id", async (req, res) => {
   }
 });
 
-app.post("/formresult", async (req, res) => {
-  const { form } = req.body;
-  if (form) {
-    const result = await postForm(form);
+app.post("/formresult/:id", async (req, res) => {
+  const data = req.body;
+  const id = req.params.id;
+  console.log(id, data);
+  if (data && id) {
+    const result = await postForm(data, id);
 
-    res.status(200).json(result.data);
+    res.status(200).send(result.data);
   }
 });
 
